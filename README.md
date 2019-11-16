@@ -1,6 +1,6 @@
 # SL(View)
 
-Visualize subsets of SL(2,R) in the exterior solid torus model using
+Visualize subsets of PSL(2,R) in the exterior solid torus model using
 three.js.
 
 Includes sample data sets for PSL(2,Z) and some other Fuchsian groups,
