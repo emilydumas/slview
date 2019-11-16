@@ -9,8 +9,8 @@ arithmetic Fuchsian groups.
 
 ## Structure
 
-* [slview/] - Main HTML/javascript app
-* [arith/] - programs to generate arithmetic Fuchsian groups
+* [slview/](slview/) - Main HTML/javascript app
+* [arith/](arith/) - programs to generate arithmetic Fuchsian groups
 
 ## Requirements
 
