@@ -1,5 +1,7 @@
 # SL(View)
 
+![screenshot](images/disc14screenshot.png?raw=true "Arith k=Q d=14")
+
 Visualize subsets of PSL(2,R) in the exterior solid torus model using
 three.js.
 
