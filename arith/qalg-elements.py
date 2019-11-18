@@ -29,6 +29,11 @@ with open(args.qalgdata) as qalgdatabase:
         try:
             if int(row[0]) == args.discriminant:
                 qadata = row[1:]
+                a = qadata[0]
+                b = qadata[1]
+                if int(a) < 0:
+                    qadata[0] = b
+                    qadata[1] = a
         except ValueError:
             pass
 
