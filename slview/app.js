@@ -140,6 +140,10 @@ function init() {
     }
 }
 
+function closeInfoBox() {
+    document.getElementById('infobox').style.display = 'none';
+}
+
 function initGUI() {
     var gui = new dat.GUI();
     settings.particleSizeListener = gui.add(settings,'particleSize',0.00001,60);
@@ -153,9 +157,8 @@ function initGUI() {
 
 function initStatus() {
     window.addEventListener('click',function(event){
-	console.log(event.target);
 	if (event.target != document.getElementById("infobutton")) {
-	    document.getElementById('modal').style.display = 'none';
+	    closeInfoBox();
 	}
     });
 }
@@ -212,7 +215,9 @@ function onKeyDown(event) {
 	}
     }
 
-    // TODO: Check for ESC and close modal.
+    if (keyCode == 27){
+	closeInfoBox();
+    }
     
     render();
 }

@@ -7,52 +7,7 @@
   </head>
   <body>
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
-    <style>
-      body {
-	  margin:0;
-	  overscroll-behavior: contain;
-	  font-family: 'Roboto', sans-serif;
-	  font-size: 14pt;
-      }
-      a {
-	  color: #AAAAAA;
-      }
-      canvas {
-	  display: block;
-	  position: absolute;
-	  top: 0px;
-	  left: 0px;
-	  z-index: 0;
-      }
-      #statusbox {
-	  position: absolute;
-	  bottom: 0.5em;
-	  left: 0.5em;
-	  z-index: 10;
-	  color: white;
-      }
-      #modal {
-	  padding: 2rem;
-	  display: none; /* Hidden by default */
-	  z-index: 20; /* Sit on top */
-	  width: 40rem;
-/*	  height: 40rem; */
-	  overflow: auto; /* Enable scroll if needed */
-	  background-color: white;
-	  position: absolute;
-	  top: 50%;
-	  left: 50%;
-	  transform: translate(-50%, -50%) !important;
-      }
-      #modal h1 {
-	  margin-top: 0;
-      }
-      hr {
-	  height:1px; border:none; color:#000; background-color:#000;
-	  margin-top:1rem;
-	  margin-bottom:1rem;
-      }
-    </style>
+    <link href="css/slview.css" rel="stylesheet">
 
     <!-- SHADERS -->
     <script type="x-shader/x-vertex" id="vertexshader" src="shaders/particle.vert">
@@ -105,13 +60,13 @@
 
     <script src="app.js" type="module"></script>
 
-    <div id="statusbox"><span id="desc-short">Loading...</span> &nbsp; <a href="#" onclick="document.getElementById('modal').style.display = 'block'" id="infobutton">[Info]</a></div>
-    <div id="modal"><h1><span id="desc-title"></span></h1>
+    <div id="statusbox"><span id="desc-short">Loading...</span> &nbsp; <a href="#" onclick="document.getElementById('infobox').style.display = 'block'" id="infobutton">[Info]</a></div>
+    <div class="modal" id="infobox"><span class="modal-close-button topright">&times;</span><h1><span id="desc-title"></span></h1>
       <span id="desc-long"></span>
       <hr>
 	This tool shows subsets of PSL(2,R) in the &quot;exterior solid torus model&quot;.  We identify PSL(2,R) with a solid torus in the 3-dimensional sphere and stereographically project so that the identity element becomes the point at infinity.  Elements of the chosen subset are marked by disks that are colored according to the element type (white for hyperbolic, yellow for parabolic, pink for elliptic).  The size of the disk is inversely proportional to the distance the element moves a base point in the hyperbolic plane.
       <hr>
-	SL(View) v0.2 by <a href="http://dumas.io">David Dumas</a> &nbsp; (<a href="https://github.com/daviddumas/slview/">source code</a>)
+	SL(View) v0.2 by <a href="http://dumas.io">David Dumas</a>  <span style="float:right"><a href="https://github.com/daviddumas/slview/">[code]</a></span>
     </div>
   </body>
 </html>
