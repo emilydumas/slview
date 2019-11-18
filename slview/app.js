@@ -140,8 +140,16 @@ function init() {
     }
 }
 
-function closeInfoBox() {
+function hideInfoBox() {
     document.getElementById('infobox').style.display = 'none';
+}
+
+function showInfoBox() {
+    document.getElementById('infobox').style.display = 'block';
+}
+
+function infoBoxVisible() {
+    return document.getElementById('infobox').style.display != 'none';
 }
 
 function initGUI() {
@@ -158,7 +166,7 @@ function initGUI() {
 function initStatus() {
     window.addEventListener('click',function(event){
 	if (event.target != document.getElementById("infobutton")) {
-	    closeInfoBox();
+	    hideInfoBox();
 	}
     });
 }
@@ -216,7 +224,15 @@ function onKeyDown(event) {
     }
 
     if (keyCode == 27){
-	closeInfoBox();
+	hideInfoBox();
+    }
+
+    if (keyCode == 73) {
+	if (infoBoxVisible()) {
+	    hideInfoBox();
+	} else {
+	    showInfoBox();
+	}
     }
     
     render();
