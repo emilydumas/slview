@@ -115,6 +115,7 @@ var settings = new Settings();
 function Settings() {
     this.particleSize = 20;
     this.particleAlpha = 1.0;
+    this.maxLogNorm = 15.0;
     this.checker = false;
     this.particleSizeListener = null;
     this.dataset = default_dataset;
@@ -138,9 +139,10 @@ function init() {
 
     var uniforms = {
 	pointTexture: { value: new THREE.TextureLoader().load( 'textures/sprites/disk.png' ) },
-	coordscale: { value: 20.0 },
+	coordscale: { value: settings.particleSize },
 	sizescale: { value: window.innerHeight * window.devicePixelRatio * settings.particleSize / 1600.0 },
 	alpha: { value: settings.particleAlpha },
+    maxnormsq: { value: Math.exp(2.0*settings.maxLogNorm) },
     };
     
     particleMaterial = new THREE.ShaderMaterial( {
@@ -196,9 +198,8 @@ function initGUI() {
     var gui = new dat.GUI();
     settings.particleSizeListener = gui.add(settings,'particleSize',0.00001,60);
     settings.particleSizeListener.onChange(updateParticleSize);
-    
-    settings.particleSizeListener = gui.add(settings,'particleAlpha',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.alpha.value = x; })
-
+    gui.add(settings,'particleAlpha',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.alpha.value = x; })
+    gui.add(settings,'maxLogNorm',0.0,15.0).onChange(function(x) { particleMaterial.uniforms.maxnormsq.value = Math.exp(2.0*x); })
     gui.add(settings,'dataset', Object.keys(datasets) ).onFinishChange(loadParticleCloud);
 }    
 

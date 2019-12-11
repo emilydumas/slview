@@ -10,16 +10,20 @@
     <link href="css/slview.css" rel="stylesheet">
 
     <!-- SHADERS -->
-    <script type="x-shader/x-vertex" id="vertexshader" src="shaders/particle.vert">
+    <script type="x-shader/x-vertex" id="vertexshader">
       attribute float m22;
       varying vec3 vColor;
+      varying float normsq;
       uniform float coordscale;
       uniform float sizescale;
+      uniform float maxnormsq;
       void main() {
 	  float a = position.x;
 	  float b = position.y;
 	  float c = position.z;
 	  float d = m22;
+
+    normsq = a*a + b*b + c*c + d*d;
 
 	  // Compute color: White for hyperbolic, yellow parabolic, pink elliptic
 	  float t = a+d;
@@ -47,13 +51,18 @@
 	  gl_Position = projectionMatrix * mvPosition;
       }
     </script>
-    <script type="x-shader/x-fragment" id="fragmentshader" src="shaders/particle.frag">
+    <script type="x-shader/x-fragment" id="fragmentshader">
       uniform sampler2D pointTexture;
       varying vec3 vColor;
+      varying float normsq;
       uniform float alpha;
+      uniform float maxnormsq;
       void main() {
-	  gl_FragColor = vec4( vColor, alpha );
-	  gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
+        if (normsq > maxnormsq) {
+          discard;
+        }
+	      gl_FragColor = vec4( vColor, alpha );
+	      gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
       }
     </script>
     <!-- END SHADERS -->
