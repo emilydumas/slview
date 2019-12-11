@@ -6,6 +6,46 @@ import { TrackballControls } from './lib/three.js/examples/jsm/controls/Trackbal
 const default_dataset = 'PSL(2,Z) [120k]';
 
 const datasets = {
+    '(2,3,7) triangle group':
+    { url: 'data/tri237.json',
+      longdesc: 'The (2,3,7) triangle Fuchsian group, a cocompact group with elliptic elements.  This group minimizes covolume among all Fuchsian groups.  This group is arithmetic.'
+    },
+    '(3,3,5) triangle group':
+    { url: 'data/tri335.json',
+      longdesc: 'The (3,3,5) triangle Fuchsian group, a cocompact group with elliptic elements.  This group is arithmetic.'
+    },
+    '(3,3,9) triangle group':
+    { url: 'data/tri339.json',
+      longdesc: 'The (3,3,9) triangle Fuchsian group, a cocompact group with elliptic elements.  This group is arithmetic.'
+    },
+    '(3,3,10) triangle group':
+    { url: 'data/tri3310.json',
+      longdesc: 'The (3,3,10) triangle Fuchsian group, a cocompact group with elliptic elements.  This group is non-arithmetic.'
+    },
+    '(3,4,4) triangle group':
+    { url: 'data/tri344.json',
+      longdesc: 'The (3,4,4) triangle Fuchsian group, a cocompact group with elliptic elements.  This group is arithmetic.'
+    },
+    '(3,4,5) triangle group':
+    { url: 'data/tri345.json',
+      longdesc: 'The (3,4,5) triangle Fuchsian group, a cocompact group with elliptic elements.  This group is non-arithmetic.'
+    },
+    '(3,4,6) triangle group':
+    { url: 'data/tri346.json',
+      longdesc: 'The (3,4,6) triangle Fuchsian group, a cocompact group with elliptic elements.  This group is arithmetic.'
+    },
+    '(3,4,7) triangle group':
+    { url: 'data/tri347.json',
+      longdesc: 'The (3,4,7) triangle Fuchsian group, a cocompact group with elliptic elements.  This group is non-arithmetic.'
+    },
+    '(4,4,4) triangle group':
+    { url: 'data/tri444.json',
+      longdesc: 'The (4,4,4) triangle Fuchsian group, a cocompact group with elliptic elements.  This corresponds to the tiling of the hyperbolic plane by equilateral triangles with interior angles pi/4.  This group is arithmetic.'
+    },
+    'Golden L Veech group':
+    { url: 'data/golden.json',
+      longdesc: '6k elements of the Veech group of the "Golden L" billiard table.  (See e.g. C. T. McMullen, "Teichmuller dynamics and unique ergodicity via currents and Hodge theory".', 
+    },
     'PSL(2,Z) [120k]':
     { url: 'data/psl2z-medium.json',
       longdesc: 'The projectivized integer unimodular group.  Approximately 120,000 elements.',
@@ -20,7 +60,7 @@ const datasets = {
     },
     'Arith d=6 k=Q':
     { url: 'data/disc6.json',
-      longdesc: 'The arithmetic Fuchsian group corresponding to a maximal order in the rational quaternion algebra of discriminant 6.  Geometrically, this is a (3,4,4) triangle group.  Approximately 370,000 elements.',
+      longdesc: 'The arithmetic Fuchsian group corresponding to a maximal order in the rational quaternion algebra of discriminant 6.  Geometrically, this is a (3,4,4) triangle group.  Approximately 370,000 elements.  (The example titled "(3,4,4) triangle group" has a larger subset of the same group.)',
     },
     'Arith d=14 k=Q':
     { url: 'data/disc14.json',
