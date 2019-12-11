@@ -11,59 +11,59 @@
 
     <!-- SHADERS -->
     <script type="x-shader/x-vertex" id="vertexshader">
-      attribute float m22;
-      varying vec3 vColor;
-      varying float normsq;
-      uniform float coordscale;
-      uniform float sizescale;
-      uniform float maxnormsq;
-      void main() {
-	  float a = position.x;
-	  float b = position.y;
-	  float c = position.z;
-	  float d = m22;
+    attribute float m22;
+    varying vec3 vColor;
+    varying float normsq;
+    uniform float coordscale;
+    uniform float sizescale;
+    uniform float maxnormsq;
+    void main() {
+      float a = position.x;
+      float b = position.y;
+      float c = position.z;
+      float d = m22;
 
-    normsq = a*a + b*b + c*c + d*d;
+      normsq = a*a + b*b + c*c + d*d;
 
-	  // Compute color: White for hyperbolic, yellow parabolic, pink elliptic
-	  float t = a+d;
-	  float isomtype = sign(t*t-4.0);
-	  vColor = vec3(1.0,
-			0.75 + 0.25*sign(isomtype+0.5),
-			0.75 + 0.25*sign(isomtype-0.5));
+      // Compute color: White for hyperbolic, yellow parabolic, pink elliptic
+	    float t = a+d;
+	    float isomtype = sign(t*t-4.0);
+	    vColor = vec3(1.0,
+			              0.75 + 0.25*sign(isomtype+0.5),
+			              0.75 + 0.25*sign(isomtype-0.5));
 
-	  // S^3 point
-	  vec4 ns3 = normalize( vec4(a*a + b*b - c*c - d*d,
-				     -2.0*(a*c + b*d),
-				     2.0*(b - c)*(a + d),
-				     (a + b - c + d)*(a - b + c + d)) );
+	    // S^3 point
+	    vec4 ns3 = normalize( vec4(a*a + b*b - c*c - d*d,
+				                         -2.0*(a*c + b*d),
+				                          2.0*(b - c)*(a + d),
+				                         (a + b - c + d)*(a - b + c + d)) );
 	  
-	  // Stereographic projection to R^3
-	  vec3 r3p = coordscale * ns3.xyz / (1.0 - ns3.w);
-	  vec4 mvPosition = modelViewMatrix * vec4( r3p, 1.0 );
+	    // Stereographic projection to R^3
+	    vec3 r3p = coordscale * ns3.xyz / (1.0 - ns3.w);
+	    vec4 mvPosition = modelViewMatrix * vec4( r3p, 1.0 );
 
-	  // Size based on r = radius of image of 0 in the disk model
-	  float s = sqrt( ((b+c)*(b+c) + (a-d)*(a-d)) / ((b-c)*(b-c) + (a+d)*(a+d)) );
-	  s = sqrt(1.0-s) / (1.0-ns3.w);
+	    // Size based on r = radius of image of 0 in the disk model
+	    float s = sqrt( ((b+c)*(b+c) + (a-d)*(a-d)) / ((b-c)*(b-c) + (a+d)*(a+d)) );
+	    s = sqrt(1.0-s) / (1.0-ns3.w);
 
-	  // gl_PointSize is measured in _pixels_
-	  gl_PointSize = sizescale * s * ( 300.0 / -mvPosition.z );
-	  gl_Position = projectionMatrix * mvPosition;
-      }
+	    // gl_PointSize is measured in _pixels_
+	    gl_PointSize = sizescale * s * ( 300.0 / -mvPosition.z );
+	    gl_Position = projectionMatrix * mvPosition;
+    }
     </script>
     <script type="x-shader/x-fragment" id="fragmentshader">
-      uniform sampler2D pointTexture;
-      varying vec3 vColor;
-      varying float normsq;
-      uniform float alpha;
-      uniform float maxnormsq;
-      void main() {
-        if (normsq > maxnormsq) {
-          discard;
-        }
-	      gl_FragColor = vec4( vColor, alpha );
-	      gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
+    uniform sampler2D pointTexture;
+    varying vec3 vColor;
+    varying float normsq;
+    uniform float alpha;
+    uniform float maxnormsq;
+    void main() {
+      if (normsq > maxnormsq) {
+        discard;
       }
+      gl_FragColor = vec4( vColor, alpha );
+      gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
+    }
     </script>
     <!-- END SHADERS -->
 
