@@ -115,6 +115,7 @@ var settings = new Settings();
 function Settings() {
     this.particleSize = 20;
     this.particleAlpha = 1.0;
+    this.minLogNorm = 0.0;
     this.maxLogNorm = 15.0;
     this.insideOutside = 1.0;
     this.particleSizeListener = null;
@@ -142,6 +143,7 @@ function init() {
 	coordscale: { value: settings.particleSize },
 	sizescale: { value: window.innerHeight * window.devicePixelRatio * settings.particleSize / 1600.0 },
 	alpha: { value: settings.particleAlpha },
+    minnormsq: { value: 0.0 },
     maxnormsq: { value: Math.exp(2.0*settings.maxLogNorm) },
     r4transform: { value: new THREE.Matrix4()  }
     };
@@ -207,13 +209,23 @@ function genOutsideInsideMat(x) {
     return m;
 }
 
+function minNSQ(x) {
+    if (x == 0.0) {
+        return 0.0
+    } else {
+        return Math.exp(2.0*x);
+    }
+}
+
 function initGUI() {
     var gui = new dat.GUI();
     settings.particleSizeListener = gui.add(settings,'particleSize',0.00001,60);
     settings.particleSizeListener.onChange(updateParticleSize);
     gui.add(settings,'particleAlpha',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.alpha.value = x; })
-    gui.add(settings,'maxLogNorm',0.0,15.0).onChange(function(x) { particleMaterial.uniforms.maxnormsq.value = Math.exp(2.0*x); })
     gui.add(settings,'insideOutside',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.r4transform.value = genOutsideInsideMat(x); })
+    var f = gui.addFolder('Filter elements');
+    f.add(settings,'minLogNorm',0.0,15.0).onChange(function(x) { particleMaterial.uniforms.minnormsq.value = minNSQ(x); })
+    f.add(settings,'maxLogNorm',0.0,15.0).onChange(function(x) { particleMaterial.uniforms.maxnormsq.value = Math.exp(2.0*x); })
     gui.add(settings,'dataset', Object.keys(datasets) ).onFinishChange(loadParticleCloud);
 }    
 

@@ -17,7 +17,6 @@
     uniform float coordscale;
     uniform float sizescale;
     uniform mat4 r4transform;
-    uniform float maxnormsq;
     void main() {
       float a = position.x;
       float b = position.y;
@@ -58,9 +57,10 @@
     varying vec3 vColor;
     varying float normsq;
     uniform float alpha;
+    uniform float minnormsq;
     uniform float maxnormsq;
     void main() {
-      if (normsq > maxnormsq) {
+      if ((normsq > maxnormsq) || (normsq < minnormsq)) {
         discard;
       }
       gl_FragColor = vec4( vColor, alpha );
