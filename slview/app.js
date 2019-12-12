@@ -135,23 +135,23 @@ function init() {
     scene.add(camera);
 
     var uniforms = {
-	pointTexture: { value: new THREE.TextureLoader().load( 'textures/sprites/disk.png' ) },
-	coordscale: { value: settings.particleSize },
-	sizescale: { value: window.innerHeight * window.devicePixelRatio * settings.particleSize / 1600.0 },
-	alpha: { value: settings.particleAlpha },
-    minnormsq: { value: 0.0 },
-    maxnormsq: { value: Math.exp(2.0*settings.maxLogNorm) },
-    r4transform: { value: new THREE.Matrix4()  }
+        pointTexture: { value: new THREE.TextureLoader().load( 'textures/sprites/disk.png' ) },
+        coordscale: { value: settings.particleSize },
+	    sizescale: { value: window.innerHeight * window.devicePixelRatio * settings.particleSize / 1600.0 },
+	    alpha: { value: settings.particleAlpha },
+        minnormsq: { value: 0.0 },
+        maxnormsq: { value: Math.exp(2.0*settings.maxLogNorm) },
+        r4transform: { value: new THREE.Matrix4()  }
     };
     
     particleMaterial = new THREE.ShaderMaterial( {
-	uniforms: uniforms,
-	vertexShader: document.getElementById( 'vertexshader' ).textContent,
-	fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
-	blending: THREE.AdditiveBlending,
-	depthTest: false,
-	transparent: true,
-	vertexColors: true
+        uniforms: uniforms,
+        vertexShader: document.getElementById( 'vertexshader' ).textContent,
+	    fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+	    blending: THREE.AdditiveBlending,
+	    depthTest: false,
+	    transparent: true,
+	    vertexColors: true
     } );
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -167,17 +167,17 @@ function init() {
     controls.rotateSpeed = 3.0;
 
     if (showStats) {
-	stats = new Stats();
-	container.appendChild( stats.dom );
+	    stats = new Stats();
+	    container.appendChild( stats.dom );
     }
     
     window.addEventListener( 'resize', onWindowResize, false );
     document.addEventListener( 'keydown', onKeyDown, false);
 
     window.onload = function() {
-	initStatus();
-	initGUI();
-    beginLoadParticleCloud(settings.dataset);
+	    initStatus();
+	    initGUI();
+        beginLoadParticleCloud(settings.dataset);
     }
 }
 
@@ -194,12 +194,12 @@ function infoBoxVisible() {
 }
 
 function hideLoadingBox() {
-   document.getElementById('loadingbox').style.display = 'none'; 
+    document.getElementById('loadingbox').style.display = 'none'; 
 }
 
 function showLoadingBox() {
-   document.getElementById('loadingmsg').innerHTML = 'Loading...';
-   document.getElementById('loadingbox').style.display = 'block'; 
+    document.getElementById('loadingmsg').innerHTML = 'Loading...';
+    document.getElementById('loadingbox').style.display = 'block'; 
 }
 
 function showTransientErrorBox() {
@@ -306,21 +306,21 @@ function onKeyDown(event) {
 
     // minus
     if (keyCode == 189) {
-	if (settings.particleSize > 1) {
+        if (settings.particleSize > 1) {
             setParticleSize( settings.particleSize - 1 );
-	}
+	    }
     }
 
     if (keyCode == 27){
-	hideInfoBox();
+	    hideInfoBox();
     }
 
     if (keyCode == 73) {
-	if (infoBoxVisible()) {
-	    hideInfoBox();
-	} else {
-	    showInfoBox();
-	}
+	   if (infoBoxVisible()) {
+	       hideInfoBox();
+	    } else {
+	       showInfoBox();
+	    }
     }
     
     render();
@@ -347,7 +347,7 @@ function animate() {
     requestAnimationFrame( animate );    
     render();
     if (showStats) {
-	stats.update();
+	   stats.update();
     }
     controls.update();
 }
