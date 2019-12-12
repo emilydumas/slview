@@ -116,7 +116,7 @@ function Settings() {
     this.particleSize = 20;
     this.particleAlpha = 1.0;
     this.maxLogNorm = 15.0;
-    this.checker = false;
+    this.insideOutside = 1.0;
     this.particleSizeListener = null;
     this.dataset = default_dataset;
 }
@@ -143,6 +143,7 @@ function init() {
 	sizescale: { value: window.innerHeight * window.devicePixelRatio * settings.particleSize / 1600.0 },
 	alpha: { value: settings.particleAlpha },
     maxnormsq: { value: Math.exp(2.0*settings.maxLogNorm) },
+    r4transform: { value: new THREE.Matrix4()  }
     };
     
     particleMaterial = new THREE.ShaderMaterial( {
@@ -194,12 +195,25 @@ function infoBoxVisible() {
     return document.getElementById('infobox').style.display != 'none';
 }
 
+function genOutsideInsideMat(x) {
+    var m = new THREE.Matrix4();
+    var c = Math.cos(0.5*Math.PI*(1-x));
+    var s = Math.sin(0.5*Math.PI*(1-x));
+    m.set(
+        1.0, 0.0, 0.0, 0.0,
+        0.0,   c, 0.0,  -s,
+        0.0, 0.0, 1.0, 0.0,
+        0.0,   s, 0.0,   c);
+    return m;
+}
+
 function initGUI() {
     var gui = new dat.GUI();
     settings.particleSizeListener = gui.add(settings,'particleSize',0.00001,60);
     settings.particleSizeListener.onChange(updateParticleSize);
     gui.add(settings,'particleAlpha',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.alpha.value = x; })
     gui.add(settings,'maxLogNorm',0.0,15.0).onChange(function(x) { particleMaterial.uniforms.maxnormsq.value = Math.exp(2.0*x); })
+    gui.add(settings,'insideOutside',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.r4transform.value = genOutsideInsideMat(x); })
     gui.add(settings,'dataset', Object.keys(datasets) ).onFinishChange(loadParticleCloud);
 }    
 

@@ -16,6 +16,7 @@
     varying float normsq;
     uniform float coordscale;
     uniform float sizescale;
+    uniform mat4 r4transform;
     uniform float maxnormsq;
     void main() {
       float a = position.x;
@@ -37,6 +38,7 @@
 				                         -2.0*(a*c + b*d),
 				                          2.0*(b - c)*(a + d),
 				                         (a + b - c + d)*(a - b + c + d)) );
+      ns3 = r4transform * ns3;
 	  
 	    // Stereographic projection to R^3
 	    vec3 r3p = coordscale * ns3.xyz / (1.0 - ns3.w);
@@ -44,7 +46,7 @@
 
 	    // Size based on r = radius of image of 0 in the disk model
 	    float s = sqrt( ((b+c)*(b+c) + (a-d)*(a-d)) / ((b-c)*(b-c) + (a+d)*(a+d)) );
-	    s = sqrt(1.0-s) / (1.0-ns3.w);
+	    s = sqrt(1.0-s) / (1.0 - ns3.w);
 
 	    // gl_PointSize is measured in _pixels_
 	    gl_PointSize = sizescale * s * ( 300.0 / -mvPosition.z );
