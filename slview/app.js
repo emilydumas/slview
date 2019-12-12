@@ -3,7 +3,7 @@ import * as THREE from './lib/three.js/build/three.module.js';
 import Stats from './lib/three.js/examples/jsm/libs/stats.module.js';
 import { TrackballControls } from './lib/three.js/examples/jsm/controls/TrackballControls.js';
 
-const default_dataset = 'PSL(2,Z) [120k]';
+const default_dataset = 'PSL(2,Z)';
 
 const datasets = {
     '(2,3,7) triangle group':
@@ -46,17 +46,13 @@ const datasets = {
     { url: 'data/golden.json',
       longdesc: '6k elements of the Veech group of the "Golden L" billiard table.  (See e.g. C. T. McMullen, "Teichmuller dynamics and unique ergodicity via currents and Hodge theory".', 
     },
-    'PSL(2,Z) [120k]':
-    { url: 'data/psl2z-medium.json',
+    'PSL(2,Z)':
+    { url: 'data/psl2z.json',
       longdesc: 'The projectivized integer unimodular group.  Approximately 120,000 elements.',
     },
-    'PSL(2,Z) [750k]':
+    'PSL(2,Z) [huge]':
     { url: 'data/psl2z-big.json',
-      longdesc: 'The projectivized integer unimodular group.  Approximately 750,000 elements.',
-    },
-    'PSL(2,Z) [12k]':
-    { url: 'data/psl2z-tiny.json',
-      longdesc: 'The projectivized integer unimodular group.  Approximately 12,000 elements.',
+      longdesc: 'The projectivized integer unimodular group (large dataset).  Approximately 750,000 elements.',
     },
     'Arith d=6 k=Q':
     { url: 'data/disc6.json',
@@ -219,6 +215,7 @@ function minNSQ(x) {
 
 function initGUI() {
     var gui = new dat.GUI();
+    gui.add(settings,'dataset', Object.keys(datasets) ).onFinishChange(loadParticleCloud);
     settings.particleSizeListener = gui.add(settings,'particleSize',0.00001,60);
     settings.particleSizeListener.onChange(updateParticleSize);
     gui.add(settings,'particleAlpha',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.alpha.value = x; })
@@ -226,7 +223,6 @@ function initGUI() {
     var f = gui.addFolder('Filter elements');
     f.add(settings,'minLogNorm',0.0,15.0).onChange(function(x) { particleMaterial.uniforms.minnormsq.value = minNSQ(x); })
     f.add(settings,'maxLogNorm',0.0,15.0).onChange(function(x) { particleMaterial.uniforms.maxnormsq.value = Math.exp(2.0*x); })
-    gui.add(settings,'dataset', Object.keys(datasets) ).onFinishChange(loadParticleCloud);
 }    
 
 
