@@ -177,7 +177,7 @@ function init() {
     window.onload = function() {
 	initStatus();
 	initGUI();
-        loadParticleCloud(settings.dataset);
+    beginLoadParticleCloud(settings.dataset);
     }
 }
 
@@ -191,6 +191,23 @@ function showInfoBox() {
 
 function infoBoxVisible() {
     return document.getElementById('infobox').style.display != 'none';
+}
+
+function hideLoadingBox() {
+   document.getElementById('loadingbox').style.display = 'none'; 
+}
+
+function showLoadingBox() {
+   document.getElementById('loadingmsg').innerHTML = 'Loading...';
+   document.getElementById('loadingbox').style.display = 'block'; 
+}
+
+function showTransientErrorBox() {
+    document.getElementById('loadingmsg').innerHTML = 'Failed to load dataset';
+    document.getElementById('loadingbox').style.display = 'block';
+    window.setTimeout(function() {
+        document.getElementById('loadingbox').style.display = 'none';
+    },2000);
 }
 
 function genOutsideInsideMat(x) {
@@ -215,7 +232,7 @@ function minNSQ(x) {
 
 function initGUI() {
     var gui = new dat.GUI();
-    gui.add(settings,'dataset', Object.keys(datasets) ).onFinishChange(loadParticleCloud);
+    gui.add(settings,'dataset', Object.keys(datasets) ).onFinishChange(beginLoadParticleCloud);
     settings.particleSizeListener = gui.add(settings,'particleSize',0.00001,60);
     settings.particleSizeListener.onChange(updateParticleSize);
     gui.add(settings,'particleAlpha',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.alpha.value = x; })
@@ -234,34 +251,40 @@ function initStatus() {
     });
 }
 
-function loadParticleCloud(key) {
+function beginLoadParticleCloud(key) {
+    var request = new XMLHttpRequest();
+    request.open('GET', datasets[key]['url'], true);
+    request.onreadystatechange = function () {
+        if (request.readyState == XMLHttpRequest.DONE) {
+            if (request.status === 200) {
+                finishLoadParticleCloud(key,request.responseText);
+            } else {
+                showTransientErrorBox();
+            }
+        }
+    }
+    showLoadingBox();
+    request.send(null);
+}
+
+function finishLoadParticleCloud(key,text) {
     var positions = [];
     var m22s = [];
 
-    document.getElementById('desc-short').innerHTML = 'Loading...';
-    document.getElementById('desc-title').innerHTML = '';
-    document.getElementById('desc-long').innerHTML = '';
-    
-    var request = new XMLHttpRequest();
-    request.open('GET', datasets[key]['url'], false);
-    request.send(null);
-    if (request.status === 200) {
-	var dataArr = JSON.parse(request.responseText);
+	var dataArr = JSON.parse(text);
 	dataArr.forEach(function(row) {
 	    positions.push(row[0]);
 	    positions.push(row[1]);
 	    positions.push(row[2]);
 	    m22s.push(row[3]);
 	});
-    }
 
     var geometry = new THREE.BufferGeometry();
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ).setUsage(THREE.DynamicDrawUsage) );
     geometry.setAttribute( 'm22', new THREE.Float32BufferAttribute( m22s, 1 ).setUsage(THREE.DynamicDrawUsage) );
 
-
     if (particleCloud != null)
-	scene.remove( particleCloud );
+    	scene.remove( particleCloud );
     
     particleCloud = new THREE.Points( geometry, particleMaterial );
     scene.add( particleCloud );
@@ -269,6 +292,8 @@ function loadParticleCloud(key) {
     document.getElementById('desc-short').innerHTML = key;
     document.getElementById('desc-title').innerHTML = key
     document.getElementById('desc-long').innerHTML = datasets[key]['longdesc'];
+
+    hideLoadingBox();
 }
 
 function onKeyDown(event) {
