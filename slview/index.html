@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>SL(View)</title>
+    <title>CubicView</title>
   </head>
   <body>
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
@@ -25,12 +25,8 @@
 
       normsq = a*a + b*b + c*c + d*d;
 
-      // Compute color: White for hyperbolic, yellow parabolic, pink elliptic
-	    float t = a+d;
-	    float isomtype = sign(t*t-4.0);
-	    vColor = vec3(1.0,
-			              0.75 + 0.25*sign(isomtype+0.5),
-			              0.75 + 0.25*sign(isomtype-0.5));
+      // Compute color
+	    vColor = vec3(1.0,1.0,1.0);
 
 	    // S^3 point
 	    vec4 ns3 = normalize( vec4(a*a + b*b - c*c - d*d,
@@ -75,9 +71,9 @@
     <div class="modal" id="infobox"><span class="modal-close-button topright">&times;</span><h1><span id="desc-title"></span></h1>
       <span id="desc-long"></span>
       <hr>
-	This tool shows subsets of PSL(2,R) in the &quot;exterior solid torus model&quot;.  We identify PSL(2,R) with a solid torus in the 3-dimensional sphere and stereographically project so that the identity element becomes the point at infinity.  Elements of the chosen subset are marked by disks that are colored according to the element type (white for hyperbolic, yellow for parabolic, pink for elliptic).  The size of the disk is inversely proportional to the distance the element moves a base point in the hyperbolic plane.
+	This tool shows cubic polynomials with negative discriminant in the solid torus model.
       <hr>
-	SL(View) v0.3 by <a href="http://dumas.io">David Dumas</a>  <span style="float:right"><a href="https://github.com/daviddumas/slview/">[code]</a></span>
+	CubicView by <a href="http://dumas.io">David Dumas</a>  <span style="float:right"><a href="https://github.com/daviddumas/slview/">[code]</a></span>
     </div>
     <div class="modal" id="loadingbox"><h1 id="loadingmsg"></h1></div>
   </body>
