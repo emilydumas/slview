@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>T1H2</title>
+  </head>
+  <body>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="css/slview.css" rel="stylesheet">
+
+    <!-- SHADERS -->
+    <script type="x-shader/x-vertex" id="vertexshader">
+    attribute vec2 vecdatum; // vector component 4 & size
+    varying vec3 vColor;
+    varying float normsq;
+    uniform float coordscale;
+    uniform float sizescale;
+    uniform mat4 r4transform;
+    void main() {
+      float x = position.x;
+      float y = position.y;
+      float cx = position.z;
+      float cy = vecdatum.x;
+      float s = vecdatum.y;
+
+      // Compute color
+	    vColor = vec3(1.0,1.0,1.0);
+
+	    // S^3 point
+	    vec4 ns3 = normalize( vec4(x,y,cx,cy) );
+      ns3 = r4transform * ns3;
+	  
+	    // Stereographic projection to R^3
+	    vec3 r3p = coordscale * ns3.xyz / (1.0 - ns3.w);
+	    vec4 mvPosition = modelViewMatrix * vec4( r3p, 1.0 );
+
+	    s = s / (1.0 - ns3.w);
+
+	    // gl_PointSize is measured in _pixels_
+	    gl_PointSize = sizescale * s * ( 300.0 / -mvPosition.z );
+	    gl_Position = projectionMatrix * mvPosition;
+    }
+    </script>
+    <script type="x-shader/x-fragment" id="fragmentshader">
+    uniform sampler2D pointTexture;
+    varying vec3 vColor;
+    uniform float alpha;
+    void main() {
+      gl_FragColor = vec4( vColor, alpha );
+      gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
+    }
+    </script>
+    <!-- END SHADERS -->
+
+    <script src="app.js" type="module"></script>
+
+    <div id="statusbox"><span id="desc-short">Loading...</span> &nbsp; <a href="#" onclick="document.getElementById('infobox').style.display = 'block'" id="infobutton">[Info]</a></div>
+    <div class="modal" id="infobox"><span class="modal-close-button topright">&times;</span><h1><span id="desc-title"></span></h1>
+      <span id="desc-long"></span>
+      <hr>
+	This tool shows subsets of the unit tangent bundle of the hyperbolic plane.
+      <hr>
+	T1H2 by <a href="http://dumas.io">David Dumas</a>  <span style="float:right"><a href="https://github.com/daviddumas/slview/">[code]</a></span>
+    </div>
+    <div class="modal" id="loadingbox"><h1 id="loadingmsg"></h1></div>
+  </body>
+</html>
