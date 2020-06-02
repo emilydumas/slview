@@ -7,8 +7,11 @@ import { SLJLoader } from './sljloader.js';
 var loader = new THREE.FileLoader().setResponseType('json');
 var sljloader = new SLJLoader();
 var manifest;
+var localDataSets = {};
+var hiddenInput;
 var selector;
 
+var untitledUploadCount = 0;
 var showStats = true;
 var container, stats;
 var controls;
@@ -18,7 +21,7 @@ var particleCloud;
 
 var settings = new Settings();
 function Settings() {
-    this.particleSize = 0.1;
+    this.particleSize = 3.0;
     this.particleAlpha = 1.0;
     this.minLogNorm = 0.0;
     this.maxLogNorm = 15.0;
@@ -100,6 +103,12 @@ function updateDropdown(target, list){
     if (innerHTMLStr != "") target.domElement.children[0].innerHTML = innerHTMLStr;
 }
 
+function updateDatasetList() {
+    var local_keys = Object.keys(localDataSets);
+    var remote_keys = Object.keys(manifest);
+    updateDropdown(selector, local_keys.concat(remote_keys));
+}
+
 function loadManifest() {
     loader.load('data/manifest.json',onHaveManifest);
 }
@@ -108,9 +117,10 @@ function onHaveManifest(m) {
     // Store the manifest of title->filename mappings
     manifest = m;
     // Put these in the GUI dropdown menu
-    var keys = Object.keys(manifest);
-    updateDropdown(selector, keys);
-    beginLoadParticleCloud(keys[0]);
+    updateDatasetList();
+    settings.dataset = Object.keys(manifest)[0];
+    beginLoadParticleCloud(settings.dataset);
+    selector.updateDisplay();
 }
 
 function hideInfoBox() {
@@ -154,9 +164,39 @@ function genOutsideInsideMat(x) {
     return m;
 }
 
+function handleUploadedData(json) {
+    if (!('title' in json)) {
+        untitledUploadCount += 1;
+        json.title = 'Untitled upload '+untitledUploadCount;
+    }
+    var key = '(*) '.concat(json.title);
+    localDataSets[key] = sljloader.parse(json);
+    updateDatasetList();
+    settings.dataset=key;
+    beginLoadParticleCloud(settings.dataset);
+    selector.updateDisplay();
+}
+
+function startUpload() {
+    hiddenInput = document.createElement('input');
+    hiddenInput.type = 'file';
+    hiddenInput.onchange = function(e) {
+        var reader = new FileReader();
+        reader.onload = function(ee) {
+            handleUploadedData(JSON.parse(ee.target.result));
+        }
+        reader.readAsText(e.target.files[0]);
+        hiddenInput.remove();
+    }
+
+    hiddenInput.click();
+}
+
 function initGUI() {
     var gui = new dat.GUI();
     selector=gui.add(settings,'dataset', []).onFinishChange(beginLoadParticleCloud);
+    settings.showUpload = startUpload;
+    gui.add(settings,'showUpload').name('Open file');
     settings.particleSizeListener = gui.add(settings,'particleSize',0.00001,10);
     settings.particleSizeListener.onChange(updateParticleSize);
     gui.add(settings,'particleAlpha',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.alpha.value = x; })
@@ -172,12 +212,16 @@ function initStatus() {
 }
 
 function beginLoadParticleCloud(key) {
-    var url="data/".concat(manifest[key]);
     showLoadingBox();
-    sljloader.load(
-        url,
-        finishLoadParticleCloud
-    );
+    if (key in localDataSets) {
+        finishLoadParticleCloud(localDataSets[key])
+    } else {
+        var url="data/".concat(manifest[key]);
+        sljloader.load(
+            url,
+            finishLoadParticleCloud
+        );
+    }
 }
 
 function finishLoadParticleCloud(content) {
