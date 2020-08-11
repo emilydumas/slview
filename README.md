@@ -2,7 +2,9 @@
 
 ![screenshot](images/disc14screenshot.png?raw=true "Arith k=Q d=14")
 
-A WebGL app for visualizing point clouds in the unit tangent bundle of the hyperbolic plane (which can be identified with the Lie group PSL(2,R)).  In particular this app can be used to visualize Fuchsian groups.
+[Open SL(View) at https://dumas.io/slview/](https://dumas.io/slview/)
+
+SL(View) is a WebGL application for visualizing point clouds in the unit tangent bundle of the hyperbolic plane (which can be identified with the Lie group PSL(2,R)).  In particular this app can be used to visualize Fuchsian groups.
 
 Sample data sets are provided, including PSL(2,Z) and other Fuchsian groups, as well as data sets related to cubic algebraic numbers and their Galois conjugates.
 
