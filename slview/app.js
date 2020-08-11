@@ -9,7 +9,9 @@ var sljloader = new SLJLoader();
 var manifest;
 var localDataSets = {};
 var hiddenInput;
-var selector;
+var categorySelector;
+var datasetSelector;
+var categoryChanged = false;
 
 var untitledUploadCount = 0;
 var showStats = true;
@@ -19,6 +21,8 @@ var camera, cameraTarget, scene, renderer;
 var particleMaterial;
 var particleCloud;
 
+var userDataCategory = "User data";
+
 var settings = new Settings();
 function Settings() {
     this.particleSize = 3.0;
@@ -27,6 +31,7 @@ function Settings() {
     this.maxLogNorm = 15.0;
     this.insideOutside = 0.0;
     this.particleSizeListener = null;
+    this.category = null;
     this.dataset = null;
 }
 
@@ -88,25 +93,17 @@ function init() {
 	    initStatus();
 	    initGUI();
         loadManifest();
-        // beginLoadParticleCloud(settings.dataset);
     }
 }
 
-// From https://stackoverflow.com/questions/18260307/dat-gui-update-the-dropdown-list-values-for-a-controller
-function updateDropdown(target, list){   
-    var innerHTMLStr = "";
-    for(var i=0; i<list.length; i++){
-        var str = "<option value='" + list[i] + "'>" + list[i] + "</option>";
-        innerHTMLStr += str;        
-    }
-
-    if (innerHTMLStr != "") target.domElement.children[0].innerHTML = innerHTMLStr;
+function setCategoryList(L) {
+    categorySelector = categorySelector.options(L);
+    categorySelector.onFinishChange(onChangeCategory);
 }
 
-function updateDatasetList() {
-    var local_keys = Object.keys(localDataSets);
-    var remote_keys = Object.keys(manifest);
-    updateDropdown(selector, local_keys.concat(remote_keys));
+function setDatasetList(L) {
+    datasetSelector = datasetSelector.options(L);
+    datasetSelector.onFinishChange(onChangeDataset);
 }
 
 function loadManifest() {
@@ -117,10 +114,23 @@ function onHaveManifest(m) {
     // Store the manifest of title->filename mappings
     manifest = m;
     // Put these in the GUI dropdown menu
-    updateDatasetList();
-    settings.dataset = Object.keys(manifest)[0];
-    beginLoadParticleCloud(settings.dataset);
-    selector.updateDisplay();
+    setCategoryList(Object.keys(manifest));
+    categorySelector.setValue(Object.keys(manifest)[0]);
+}
+
+function onChangeCategory(key) {
+    var datasets;
+   if (settings.category == userDataCategory) {
+        datasets = Object.keys(localDataSets).reverse();
+    } else {
+        datasets = Object.keys(manifest[settings.category]);
+    }
+    setDatasetList(datasets);
+    datasetSelector.setValue(datasets[0]);
+}
+
+function onChangeDataset(key) {
+    beginLoadParticleCloud(key);
 }
 
 function hideInfoBox() {
@@ -169,12 +179,16 @@ function handleUploadedData(json) {
         untitledUploadCount += 1;
         json.title = 'Untitled upload '+untitledUploadCount;
     }
-    var key = '(*) '.concat(json.title);
+    var firstUpload = (Object.keys(localDataSets).length == 0);
+    var key = json.title;
     localDataSets[key] = sljloader.parse(json);
-    updateDatasetList();
-    settings.dataset=key;
-    beginLoadParticleCloud(settings.dataset);
-    selector.updateDisplay();
+    if (firstUpload) {
+        console.log('First upload: adding new category');
+        var categories = Object.keys(manifest);
+        categories.push(userDataCategory);
+        setCategoryList(categories);
+    }
+    categorySelector.setValue(userDataCategory);
 }
 
 function startUpload() {
@@ -194,7 +208,8 @@ function startUpload() {
 
 function initGUI() {
     var gui = new dat.GUI();
-    selector=gui.add(settings,'dataset', []).onFinishChange(beginLoadParticleCloud);
+    categorySelector=gui.add(settings,'category', []).onFinishChange(onChangeCategory);
+    datasetSelector=gui.add(settings,'dataset', []).onFinishChange(onChangeDataset);
     settings.showUpload = startUpload;
     gui.add(settings,'showUpload').name('Open file');
     settings.particleSizeListener = gui.add(settings,'particleSize',0.00001,10);
@@ -212,11 +227,12 @@ function initStatus() {
 }
 
 function beginLoadParticleCloud(key) {
+    console.log('begin load particle cloud:',key);
     showLoadingBox();
     if (key in localDataSets) {
         finishLoadParticleCloud(localDataSets[key])
     } else {
-        var url="data/".concat(manifest[key]);
+        var url="data/".concat(manifest[settings.category][key]);
         sljloader.load(
             url,
             finishLoadParticleCloud
