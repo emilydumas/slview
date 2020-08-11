@@ -17,29 +17,57 @@
     uniform float coordscale;
     uniform float sizescale;
     uniform mat4 r4transform;
+    uniform bool sl2mode;
     void main() {
-      float x = position.x;
-      float y = position.y;
-      float cx = position.z;
-      float cy = vecdatum.x;
-      float s = vecdatum.y;
+      vec4 ns3;
+      if (sl2mode) {
+        // SL2 mode projection
+        float a = position.x;
+        float b = position.y;
+        float c = position.z;
+        float d = vecdatum.x;
 
-      // Compute color
-	    vColor = vec3(1.0,1.0,1.0);
+        normsq = a*a + b*b + c*c + d*d;
 
-	    // S^3 point
-	    vec4 ns3 = normalize( vec4(x,y,cx,cy) );
+        // Compute color: White for hyperbolic, yellow parabolic, pink elliptic
+        float t = a+d;
+        float isomtype = sign(t*t-4.0);
+        vColor = vec3(1.0,
+                      0.75 + 0.25*sign(isomtype+0.5),
+                      0.75 + 0.25*sign(isomtype-0.5));
+
+        // S^3 point
+        ns3 = normalize( vec4(a*a + b*b - c*c - d*d,
+                              -2.0*(a*c + b*d),
+                               2.0*(b - c)*(a + d),
+                               (a + b - c + d)*(a - b + c + d)
+                               ) );
+      } else {
+        // T1H2 disk model projection
+        float x = position.x;
+        float y = position.y;
+        float cx = position.z;
+        float cy = vecdatum.x;
+
+        // Compute color
+        vColor = vec3(1.0,1.0,1.0);
+
+        // S^3 point
+        ns3 = normalize( vec4(x,y,cx,cy) );
+      }
+
       ns3 = r4transform * ns3;
-	  
-	    // Stereographic projection to R^3
-	    vec3 r3p = coordscale * ns3.xyz / (1.0 - ns3.w);
-	    vec4 mvPosition = modelViewMatrix * vec4( r3p, 1.0 );
 
-	    s = s / (1.0 - ns3.w);
+      // Stereographic projection to R^3
+      vec3 r3p = coordscale * ns3.xyz / (1.0 - ns3.w);
+      vec4 mvPosition = modelViewMatrix * vec4( r3p, 1.0 );
 
-	    // gl_PointSize is measured in _pixels_
-	    gl_PointSize = sizescale * s * ( 300.0 / -mvPosition.z );
-	    gl_Position = projectionMatrix * mvPosition;
+      float s = vecdatum.y;
+      s = s / (1.0 - ns3.w);
+
+      // gl_PointSize is measured in _pixels_
+      gl_PointSize = sizescale * s * ( 300.0 / -mvPosition.z );
+      gl_Position = projectionMatrix * mvPosition;
     }
     </script>
     <script type="x-shader/x-fragment" id="fragmentshader">

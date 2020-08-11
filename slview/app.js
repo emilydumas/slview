@@ -11,6 +11,7 @@ var localDataSets = {};
 var hiddenInput;
 var categorySelector;
 var datasetSelector;
+var insideOutsideSlider;
 var categoryChanged = false;
 
 var untitledUploadCount = 0;
@@ -29,7 +30,7 @@ function Settings() {
     this.particleAlpha = 1.0;
     this.minLogNorm = 0.0;
     this.maxLogNorm = 15.0;
-    this.insideOutside = 0.0;
+    this.insideOutside = 1.0;
     this.particleSizeListener = null;
     this.category = null;
     this.dataset = null;
@@ -56,7 +57,8 @@ function init() {
         coordscale: { value: 20.0 },
 	    sizescale: { value: window.innerHeight * window.devicePixelRatio * settings.particleSize / 1600.0 },
 	    alpha: { value: settings.particleAlpha },
-        r4transform: { value: genOutsideInsideMat(0.0)  }
+        r4transform: { value: genOutsideInsideMat(settings.insideOutside)  },
+        sl2mode: { value: true }
     };
     
     particleMaterial = new THREE.ShaderMaterial( {
@@ -222,8 +224,8 @@ function initGUI() {
     settings.particleSizeListener = gui.add(settings,'particleSize',0.00001,10);
     settings.particleSizeListener.onChange(updateParticleSize);
     gui.add(settings,'particleAlpha',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.alpha.value = x; })
-    gui.add(settings,'insideOutside',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.r4transform.value = genOutsideInsideMat(x); })
-}    
+    insideOutsideSlider = gui.add(settings,'insideOutside',0.0,1.0).onChange(function(x) { particleMaterial.uniforms.r4transform.value = genOutsideInsideMat(x); })
+}
 
 function initStatus() {
     window.addEventListener('click',function(event){
@@ -244,7 +246,7 @@ function beginLoadParticleCloud(key) {
             url,
             finishLoadParticleCloud,
             null,
-            handleLoadError
+            null//handleLoadError
         );
     }
 }
@@ -273,6 +275,8 @@ function finishLoadParticleCloud(content) {
 
     if (particleCloud != null)
     	scene.remove( particleCloud );
+
+    setDisplayMode(content.mode);
     
     particleCloud = new THREE.Points( geometry, particleMaterial );
     scene.add( particleCloud );
@@ -283,6 +287,21 @@ function finishLoadParticleCloud(content) {
 
     hideLoadingBox();
 }
+
+function setDisplayMode(m) {
+    if (m == 'sl2') {
+        if (particleMaterial.uniforms.sl2mode.value != true) {
+            particleMaterial.uniforms.sl2mode.value = true;
+            insideOutsideSlider.setValue(1);
+        }
+    } else {
+        if (particleMaterial.uniforms.sl2mode.value != false) {
+            particleMaterial.uniforms.sl2mode.value = false;
+            insideOutsideSlider.setValue(0);
+        }
+    }
+}
+
 
 function onKeyDown(event) {
     var keyCode = event.which;
