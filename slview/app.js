@@ -15,7 +15,7 @@ var insideOutsideSlider;
 var categoryChanged = false;
 
 var untitledUploadCount = 0;
-var showStats = true;
+var showStats = false;
 var container, stats;
 var controls;
 var camera, cameraTarget, scene, renderer;
