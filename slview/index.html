@@ -53,7 +53,10 @@
         vColor = vec3(1.0,1.0,1.0);
 
         // S^3 point
-        ns3 = normalize( vec4(x,y,cx,cy) );
+        ns3 = normalize( vec4(cx,y,x,cy) );
+        // Note: This odd shuffling of components gives the best
+        // view of the cubic datasets in the default camera setup
+        // TODO: Revise camera setup and make this vec4(x,y,cx,cy) again
       }
 
       ns3 = r4transform * ns3;
