@@ -181,7 +181,14 @@ function handleUploadedData(json) {
     }
     var firstUpload = (Object.keys(localDataSets).length == 0);
     var key = json.title;
-    localDataSets[key] = sljloader.parse(json);
+    var newds;
+    try {
+        newds = sljloader.parse(json);
+    } catch(err) {
+        handleLoadError();
+        return;
+    }
+    localDataSets[key] = newds;
     if (firstUpload) {
         console.log('First upload: adding new category');
         var categories = Object.keys(manifest);
@@ -235,9 +242,16 @@ function beginLoadParticleCloud(key) {
         var url="data/".concat(manifest[settings.category][key]);
         sljloader.load(
             url,
-            finishLoadParticleCloud
+            finishLoadParticleCloud,
+            null,
+            handleLoadError
         );
     }
+}
+
+function handleLoadError() {
+    hideInfoBox();
+    showTransientErrorBox();
 }
 
 function finishLoadParticleCloud(content) {
