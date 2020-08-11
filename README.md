@@ -4,13 +4,14 @@
 
 A WebGL app for visualizing point clouds in the unit tangent bundle of the hyperbolic plane (which can be identified with the Lie group PSL(2,R)).  In particular this app can be used to visualize Fuchsian groups.
 
-SL(View) includes sample data sets for PSL(2,Z) and other Fuchsian groups, as well as data sets related to cubic algebraic numbers and their Galois conjugates.
+Sample data sets are provided, including PSL(2,Z) and other Fuchsian groups, as well as data sets related to cubic algebraic numbers and their Galois conjugates.
 
 ## Structure
 
 * [slview/](slview/) - main HTML/javascript app
 * [datagen/](datagen/) - programs to generate data files
 * [doc/](doc/) - file format documentation
+* [util/](util/) - utilites for manipulating data files and manifests
 
 ## Requirements
 
@@ -27,11 +28,9 @@ For the arithmetic group element generator:
 
 * Python >=3.4 (?)
 * C99 (tested with GCC 9.2.1)
-
-To regenerate quaternion algebra tables that are included in the repository:
-
-* Magma >= 2.24 (?)
-* Mathematica >=12 (?)
+* Optionally, to regenerate quaternion algebra data included in the repo:
+   * Magma >= 2.24 (?)
+   * Mathematica >=12 (?)
 
 These tables list the tested versions; (?) means that older versions
 are likely to work as there is no known use of recent language
@@ -39,6 +38,7 @@ changes.
 
 ## Release history
 
+* 2020-08-11 - v0.4 - New dataset format, support for unit tangent bundle
 * 2019-12-12 - v0.3 - Asynchronous loading of datasets, status indicator modal
 * 2019-11-17 - v0.2 - First public version
 
