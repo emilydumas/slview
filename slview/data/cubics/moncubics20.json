@@ -9,7 +9,7 @@
 	],
 	"title":"monic cubics (coef<=20)",
 	"shortdesc":"Roots of monic integral cubics with negative discriminant",
-	"longdesc":"Roots of monic integral cubics with negative discriminant.  The point is H^2 is the root in the upper half plane.  The point in the boundary of H^2 is the real root. (Added on the suggestion of the Algebraic Starscapes team: Pierre Arnoux, Edmund Harriss, Katherine Stange, and Steven Trettel)",
+	"longdesc":"Roots of monic integral cubics with negative discriminant.  The point in H^2 is the root in the upper half plane.  The point in the boundary of H^2 is the real root. (Added on the suggestion of the Algebraic Starscapes team: Pierre Arnoux, Edmund Harriss, Katherine Stange, and Steven Trettel)",
 	"creator":"cubics2.nb",
 	"timestamp":"2020-06-01T06:18:56Z",
 	"vectors":[
